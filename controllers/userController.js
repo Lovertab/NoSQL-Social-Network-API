@@ -1,9 +1,8 @@
 const { get } = require('mongoose');
-const { User } = require('../models');
+const { User,Thoughts } = require('../models');
  const getUser= async (req, res)=> {
      try {
-            // populate
-            const users = await User.find().populate('user');
+            const users = await User.find().populate('thoughts');
             res.json(users);
         } catch (err) {
             res.status(500).json(err);
@@ -35,6 +34,8 @@ const deleteUser = async (req, res) => {
       if (!users) {
         return res.status(404).json({ message: 'No user with that ID' });
       }
+        await Thoughts.deleteMany({ id: { $in: users.thoughts } });
+        res.json({message:'user and thoughts were deleted'})
     } catch (err) {
       res.status(500).json(err);
     }
